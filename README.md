@@ -1,4 +1,6 @@
-# BlueTeamLab-Snort-ELK-Stack
+# Blue Team Laboratory Setup Snort - ELK Stack
+This is a step by step guide on how to setup Snort (IDS) in conjunction with Elasticsearch, Kibana and Logstash (SIEM).
+This also includes some guide on how to simulate the attack on a laboratory environment using Kali Linux VM Machine.
 
 ## The Setup
 
