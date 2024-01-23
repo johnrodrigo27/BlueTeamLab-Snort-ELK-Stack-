@@ -1,5 +1,5 @@
 1. Note your VM login credentials and IP Address to SSH
-- [Find your VM Network IP](https://www.vmware.com/go/)
+- [Find your VM Network IP](https://github.com/johnrodrigo27/BlueTeamLab-Snort-ELK-Stack-/blob/main/3.%20Other%20Notes/How%20to%20find%20your%20network%20IP.md)
 2. In your Windows Local Machine, open the cmd terminal
 - ![Windows CMD](https://github.com/johnrodrigo27/BlueTeamLab-Snort-ELK-Stack-/blob/main/Images/9.png)
 3. SSH into your VM Machine then provide the password
