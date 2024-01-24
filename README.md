@@ -7,9 +7,9 @@ This also includes some guide on how to simulate the attack on a laboratory envi
 - Internet 
     - Local Network
         - Windows Local Machine 
-            - VM (Snort) 
-            - VM (ELK Stack) 
-            - VM (Kali Linux)
+            - VM1 (Snort and FileBeat) 
+            - VM2 (ELK Stack) 
+            - VM3 (Kali Linux)
             - Other Target VM (optional)
 
 
