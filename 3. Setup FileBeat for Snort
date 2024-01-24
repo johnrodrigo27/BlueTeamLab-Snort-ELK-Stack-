@@ -1,0 +1,101 @@
+### On VM1 (Snort Machine):
+
+#### 1. **Install Filebeat**
+
+[FileBeat Installation Reference](https://www.elastic.co/guide/en/beats/filebeat/8.11/setup-repositories.html#_apt)
+
+1. **Download and Install Filebeat**:
+     ```bash
+     sudo apt-get update && sudo apt-get install filebeat
+     ```
+
+#### 2. **Configure Filebeat**
+
+1. **Edit the Filebeat Configuration File**:
+   - The main configuration file for Filebeat is located at `/etc/filebeat/filebeat.yml`. You'll need to edit this file to specify the location of your Snort logs and the details of your ELK Stack server.
+     ```bash
+     sudo nano /etc/filebeat/filebeat.yml
+     ```
+
+2. **Configure Filebeat to Read Snort Logs**:
+   - Under `filebeat.inputs`, configure Filebeat to read from your Snort log files. Specify the path to the logs.
+     ```yaml
+     filebeat.inputs:
+     - type: log
+       enabled: true
+       paths:
+         - /path/to/your/snort/logs/*.log
+     ```
+   - Replace `/path/to/your/snort/logs/*.log` with the actual path to your Snort logs.
+
+3. **Configure Output to Logstash**:
+   - Comment out the Elasticsearch output section and configure the Logstash output.
+     ```yaml
+     #output.elasticsearch:
+     #  hosts: ["localhost:9200"]
+
+     output.logstash:
+       hosts: ["VM2_IP:5044"]
+     ```
+   - Replace `VM2_IP` with the IP address of VM2 where Logstash is installed.
+
+4. **Enable and Start Filebeat Service**:
+   - After configuring Filebeat, enable and start the service.
+     ```bash
+     sudo systemctl enable filebeat
+     sudo systemctl start filebeat
+     ```
+
+### On VM2 (ELK Stack Machine):
+
+#### 1. **Configure Logstash**
+
+1. **Edit Logstash Configuration**:
+   - Create a new Logstash configuration file or edit an existing one in the `/etc/logstash/conf.d/` directory.
+     ```bash
+     sudo nano /etc/logstash/conf.d/01-filebeat-input.conf
+     ```
+   
+2. **Input Configuration**:
+   - Set up Logstash to listen for input from Filebeat.
+     ```conf
+     input {
+       beats {
+         port => 5044
+       }
+     }
+     ```
+
+3. **Filter Configuration** (Optional):
+   - You may want to add filter configurations to parse the Snort logs properly.
+   - This step depends on the format of your Snort logs and might involve writing Grok patterns.
+
+4. **Output Configuration**:
+   - Configure the output to Elasticsearch, typically in a separate configuration file.
+     ```conf
+     output {
+       elasticsearch {
+         hosts => ["localhost:9200"]
+         index => "snort-logs-%{+YYYY.MM.dd}"
+         # Optional user authentication settings
+       }
+     }
+     ```
+
+5. **Restart Logstash Service**:
+   - After editing the configuration, restart Logstash to apply the changes.
+     ```bash
+     sudo systemctl restart logstash
+     ```
+
+### Verify the Setup
+
+- **Check Filebeat Logs** on VM1 to ensure it's running without errors and can connect to Logstash on VM2.
+- **Check Logstash Logs** on VM2 for any connection issues or errors in processing the logs.
+- **Kibana**: Once the setup is verified, you should see Snort logs in Kibana on VM2, where you can create dashboards and visualizations based on the Snort log data.
+
+### Security Considerations
+
+- Ensure your network security allows traffic on the necessary ports (like 5044 for Logstash).
+- Consider encrypting the data in transit, especially if it's moving across untrusted networks.
+- Keep your Filebeat and Logstash instances updated for security and stability.
